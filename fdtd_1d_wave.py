@@ -14,9 +14,8 @@ import matplotlib.animation as animation
 def gauss(t):
     tu = 0.1
     sigma = 0.05
-    gauss = np.exp(-(tu-t)**2/(2.*sigma**2))
-    return gauss
-
+    signal = np.exp(-(tu-t)**2/(2.*sigma**2))
+    return signal
 
 print('FDTD simulacija putnog vala na idealnom vodu')
 
@@ -26,10 +25,13 @@ dx = 0.001; dt = 0.0005
 v = 1.
 fi1 = 0.; fi2 = 0.
 
-# opcija = 1 <=> homogeni vod
-# opcija = 2 <=> prijelaz zracni vod - kabel
-# opcija = 3 <=> kabel umetnut u zracni vod
-# opcija = 4 <=> prijelaz kabel u zracni vod
+# Odaberi opciju:
+# -----------------------------------------
+# opcija = 1 => homogeni vod
+# opcija = 2 => prijelaz zracni vod - kabel
+# opcija = 3 => kabel umetnut u zracni vod
+# opcija = 4 => prijelaz kabel u zracni vod
+# -----------------------------------------
 opcija = 2
 
 print('Racunam ...')
@@ -37,10 +39,12 @@ print('Racunam ...')
 Nx = int(L/dx)
 Nt = int(T/dt)
 r = np.zeros(Nx+1)
+
 if opcija == 1:
     # Homogeni vod (bez promjene valne imped.)
     for i in range(Nx+1):    
         r[i] = ((v*dt)/dx)**2
+
 elif opcija == 2:
     # Nehomogeni vod
     # Val iz sredstva vece valne impedancije prodire u sredstvo manje valne impedancije
@@ -49,6 +53,7 @@ elif opcija == 2:
             r[i] = ((v*dt)/dx)**2
         else:
             r[i] = (((v/2.)*dt)/dx)**2
+
 elif opcija == 3:
     # Nehomogeni vod
     # Dvije promjene sredstva (na svakoj trecini)
@@ -61,6 +66,7 @@ elif opcija == 3:
             r[i] = ((v*dt)/dx)**2
         else:
             r[i] = (((v/2.)*dt)/dx)**2
+
 elif opcija == 4:
     # Nehomogeni vod
     # Val iz sredstva manje valne impedancije prodire u sredstvo vece valne impedancije
@@ -97,6 +103,7 @@ print('Animacija ...')
 def init():
     line.set_ydata(np.ma.array(x, mask=True))
     return line,
+
 def animate(i):
     line.set_ydata(fi[:,i])  # update the data
     return line,
