@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
-# Definiranje gaussovog impulsa koji propagira po vodu
+# Definiranje gaussovog impulsa koji propagira po vodu.
 def gauss(t):
     tu = 0.1
     sigma = 0.05
@@ -25,14 +25,14 @@ dx = 0.001; dt = 0.0005
 v = 1.
 fi1 = 0.; fi2 = 0.
 
-# Odaberi opciju:
+# Odaberite opciju:
 # -----------------------------------------
 # opcija = 1 => homogeni vod
 # opcija = 2 => prijelaz zracni vod - kabel
 # opcija = 3 => kabel umetnut u zracni vod
 # opcija = 4 => prijelaz kabel u zracni vod
 # -----------------------------------------
-opcija = 2
+opcija = 3
 
 print('Racunam ...')
 
@@ -47,7 +47,8 @@ if opcija == 1:
 
 elif opcija == 2:
     # Nehomogeni vod
-    # Val iz sredstva vece valne impedancije prodire u sredstvo manje valne impedancije
+    # Val iz sredstva vece valne impedancije prodire u sredstvo 
+    # manje valne impedancije.
     for i in range(Nx+1):
         if i <= Nx/2:
             r[i] = ((v*dt)/dx)**2
@@ -58,7 +59,7 @@ elif opcija == 3:
     # Nehomogeni vod
     # Dvije promjene sredstva (na svakoj trecini)
     # Srednji dio je manje valne impedancije od krajnjih dijelova
-    # (npr. kabelski vod umetnut u dalekovod)
+    # (npr. kabelski vod umetnut u dalekovod).
     for i in range(Nx+1):
         if i <= Nx/3:
             r[i] = ((v*dt)/dx)**2
@@ -69,14 +70,15 @@ elif opcija == 3:
 
 elif opcija == 4:
     # Nehomogeni vod
-    # Val iz sredstva manje valne impedancije prodire u sredstvo vece valne impedancije
+    # Val iz sredstva manje valne impedancije prodire u sredstvo 
+    # vece valne impedancije.
     for i in range(Nx+1):
         if i <= Nx/2:
             r[i] = (((v/2.)*dt)/dx)**2
         else:
             r[i] = ((v*dt)/dx)**2
 
-# Inicijalizacija, definiranje rubnih i pocetnih uvjeta
+# Inicijalizacija, definiranje rubnih i pocetnih uvjeta.
 fi = np.zeros(Nx*Nt).reshape(Nx,Nt)
 
 for j in range(1,Nt):
@@ -97,9 +99,9 @@ for j in range(1,Nt-1):
 
 print('Animacija ...')
 
-# --------------------------------
-# Animacija koristenjem matplotlib
-# -------------------------------- 
+# -------------------------------------------
+# Animacija koristenjem matplotlib biblioteke
+# -------------------------------------------
 def init():
     line.set_ydata(np.ma.array(x, mask=True))
     return line,
@@ -167,5 +169,23 @@ elif opcija == 4:
     ani = animation.FuncAnimation(fig, animate, np.arange(0, Nt, 20, dtype=int), 
                                   init_func=init, blit=True)
     plt.show()
-    
+
+# Vremenska promjena u tocki diskontinuiteta.
+time = np.linspace(0, T, num=Nt)
+if opcija in [1, 2, 4]:
+    fig, ax = plt.subplots()
+    ax.plot(time, fi[int(Nx/2),:], c='royalblue', ls='-', lw=2)
+    ax.set_xlabel('Vrijeme')
+    ax.set_ylabel('Prenapon')
+    ax.grid(True)
+    plt.show()
+
+elif opcija == 3:
+    fig, ax = plt.subplots()
+    ax.plot(time, fi[int(Nx/3),:], c='royalblue', ls='-', lw=2)
+    ax.set_xlabel('Vrijeme')
+    ax.set_ylabel('Prenapon')
+    ax.grid(True)
+    plt.show()
+
 print('Kraj programa.')
