@@ -133,6 +133,8 @@ elif opcija == 2:
     ax.set_xlim(x[0], x[-1])
     ax.set_ylim(-1., 1.)
     ax.grid(True)
+    ax.text(0.2, -0.1, 'zracni vod')
+    ax.text(0.7, -0.1, 'kabel')
     ani = animation.FuncAnimation(fig, animate, np.arange(0, Nt, 20, dtype=int), 
                                   init_func=init, blit=True)
     plt.show()
@@ -151,6 +153,9 @@ elif opcija == 3:
     ax.set_xlim(x[0], x[-1])
     ax.set_ylim(-1., 1.)
     ax.grid(True)
+    ax.text(0.1, -0.1, 'zracni vod')
+    ax.text(0.45, -0.1, 'kabel')
+    ax.text(0.8, -0.1, 'zracni vod')
     ani = animation.FuncAnimation(fig, animate, np.arange(0, Nt, 20, dtype=int), 
                                   init_func=init, blit=True)
     plt.show()
@@ -166,6 +171,8 @@ elif opcija == 4:
     ax.set_xlim(x[0], x[-1])
     ax.set_ylim(-1.5, 1.5)
     ax.grid(True)
+    ax.text(0.2, -0.1, 'kabel')
+    ax.text(0.7, -0.1, 'zracni vod')
     ani = animation.FuncAnimation(fig, animate, np.arange(0, Nt, 20, dtype=int), 
                                   init_func=init, blit=True)
     plt.show()
