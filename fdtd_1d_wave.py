@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
-# Definiranje gaussovog impulsa koji propagira po vodu.
+# Definiranje impulsa koji propagira po vodu.
 def gauss(t):
     tu = 0.1
     sigma = 0.05
     signal = np.exp(-(tu-t)**2/(2.*sigma**2))
     return signal
 
-print('FDTD simulacija putnog vala na idealnom vodu')
+print('FDTD simulacija putnog vala na idealnom vodu:')
 
 # Ulazni podaci:
 L = 1.; T = 3.4
@@ -30,9 +30,9 @@ fi1 = 0.; fi2 = 0.
 # opcija = 1 => homogeni vod
 # opcija = 2 => prijelaz zracni vod - kabel
 # opcija = 3 => kabel umetnut u zracni vod
-# opcija = 4 => prijelaz kabel u zracni vod
+# opcija = 4 => prijelaz kabel - zracni vod
 # -----------------------------------------
-opcija = 3
+opcija = 2
 
 print('Racunam ...')
 
@@ -48,7 +48,7 @@ if opcija == 1:
 elif opcija == 2:
     # Nehomogeni vod
     # Val iz sredstva vece valne impedancije prodire u sredstvo 
-    # manje valne impedancije.
+    # manje valne impedancije (npr. prijelaz zracni vod - kabel).
     for i in range(Nx+1):
         if i <= Nx/2:
             r[i] = ((v*dt)/dx)**2
@@ -71,12 +71,15 @@ elif opcija == 3:
 elif opcija == 4:
     # Nehomogeni vod
     # Val iz sredstva manje valne impedancije prodire u sredstvo 
-    # vece valne impedancije.
+    # vece valne impedancije (npr. prijelaz kabel - zracni vod).
     for i in range(Nx+1):
         if i <= Nx/2:
             r[i] = (((v/2.)*dt)/dx)**2
         else:
             r[i] = ((v*dt)/dx)**2
+
+else:
+    raise NotImplementedError(f'Opcija proracuna {opcija} nije implementirana!')
 
 # Inicijalizacija, definiranje rubnih i pocetnih uvjeta.
 fi = np.zeros(Nx*Nt).reshape(Nx,Nt)
@@ -90,12 +93,12 @@ for j in range(Nt):
     fi[0,j] = gauss(ti)
 
 for i in range(1,Nx-1):
-    fi[i,1] = (1.-r[i])*fi[i,0] + (r[i]/2.)*(fi[i-1,0]+fi[i+1,0])
+    fi[i,1] = (1. - r[i])*fi[i,0] + (r[i]/2.)*(fi[i-1,0] + fi[i+1,0])
 
-# FDTD simulacija
+# FDTD simulacija.
 for j in range(1,Nt-1):
 	for i in range(1,Nx-1):
-		fi[i,j+1] = (2.*(1.-r[i]))*fi[i,j] + r[i]*(fi[i+1,j]+fi[i-1,j]) - fi[i,j-1]
+		fi[i,j+1] = (2.*(1.-r[i]))*fi[i,j] + r[i]*(fi[i+1,j] + fi[i-1,j]) - fi[i,j-1]
 
 print('Animacija ...')
 
@@ -177,6 +180,9 @@ elif opcija == 4:
                                   init_func=init, blit=True)
     plt.show()
 
+else:
+    raise NotImplementedError(f'Opcija proracuna {opcija} nije implementirana!')
+
 # Vremenska promjena u tocki diskontinuiteta.
 time = np.linspace(0, T, num=Nt)
 if opcija in [1, 2, 4]:
@@ -194,5 +200,8 @@ elif opcija == 3:
     ax.set_ylabel('Prenapon')
     ax.grid(True)
     plt.show()
+
+else:
+    raise NotImplementedError(f'Opcija proracuna {opcija} nije implementirana!')
 
 print('Kraj programa.')
